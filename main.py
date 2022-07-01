@@ -1,13 +1,21 @@
 
 from gettext import find
 from lib2to3.pgen2 import driver
+from requests import options
 from selenium.webdriver import *
 from selenium.webdriver.common.by import By
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 from time import sleep
 
 global browser
-driver = Chrome("D:/кодинг/BetChecker/chromedriver")
+
+options = webdriver.ChromeOptions()
+options.add_argument('headless')
+
+driver = webdriver.Chrome(executable_path="D:/кодинг/BetChecker/chromedriver", chrome_options=options)
+
 
 driver.get("https://www.hltv.org/matches/2357189/ex-mad-lions-vs-heet-elisa-invitational-spring-2022")
 sleep(3)
@@ -43,6 +51,7 @@ class Team:
         self.winRateList = winRateList
         self.mapList = mapList
 
+# get_mapStats показывает винрейт 1 или 2 команды на выбранной карте
     def get_mapStats(self, mapName, teamNumber):
         index = mapList.index(mapName)
         if teamNumber == 2:
@@ -50,9 +59,6 @@ class Team:
         elif teamNumber == 1:
             return (winRateList[index*2])
 
-Navi = Team('Navi', mapList, winRateList)
-# get_mapStats показывает винрейт 1 или 2 команды на выбранной карте
-print(Navi.get_mapStats('Vertigo', 2))
 
 firstTeam = Team(teamNames[0], mapList, winRateList)
 secondTeam = Team(teamNames[1], mapList, winRateList)
