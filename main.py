@@ -4,18 +4,19 @@ from lib2to3.pgen2 import driver
 from selenium.webdriver import *
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
-import time
+from time import sleep
 
 global browser
 driver = Chrome("D:/кодинг/BetChecker/chromedriver")
 
-driver.get("https://www.hltv.org/matches/2357056/masonic-vs-flet-esea-advanced-season-41-europe")
-time.sleep(3)
+driver.get("https://www.hltv.org/matches/2357189/ex-mad-lions-vs-heet-elisa-invitational-spring-2022")
+sleep(3)
 popup = driver.find_element_by_xpath('//*[@id="CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll"]')
 popup.click()
 print('popup closed')
 soup = BeautifulSoup(driver.page_source, "lxml")
-statElements = soup.find_all("div", class_="map-stats-infobox")
+
+
 mapsInfo = soup.find_all("div", class_="map-stats-infobox-maps")
 
 winRateList = []
@@ -28,9 +29,13 @@ for mapInfo in mapsInfo:
         mapStat = mapStat.text
         winRateList.append(mapStat)
     print(mapList, winRateList)
-else: 
+else:
     print('end of array')
 
+teams = soup.find_all("div", class_="teamName")
+teamNames = []
+teamNames.append(teams[0].text)
+teamNames.append(teams[1].text)
 
 class Team:
     def __init__(self, teamName, mapList, winRateList):
@@ -38,13 +43,19 @@ class Team:
         self.winRateList = winRateList
         self.mapList = mapList
 
-    def get_age(self, mapName, teamNumber):
+    def get_mapStats(self, mapName, teamNumber):
         index = mapList.index(mapName)
         if teamNumber == 2:
             return winRateList[index*2+1]
         elif teamNumber == 1:
-            print((index*2))
             return (winRateList[index*2])
 
 Navi = Team('Navi', mapList, winRateList)
-print(Navi.get_age('Vertigo', 1))
+# get_mapStats показывает винрейт 1 или 2 команды на выбранной карте
+print(Navi.get_mapStats('Vertigo', 2))
+
+firstTeam = Team(teamNames[0], mapList, winRateList)
+secondTeam = Team(teamNames[1], mapList, winRateList)
+print(firstTeam.get_mapStats('Dust2', 1))
+print(secondTeam.get_mapStats('Dust2', 2))
+
